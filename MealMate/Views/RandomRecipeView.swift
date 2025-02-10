@@ -35,7 +35,7 @@ struct RandomRecipeView: View {
                                 VStack {
                                     Stepper("\(numberOfRecipes) recipes", value: $numberOfRecipes, in: 1...10)
                                         .padding()
-                                        .background(.white)
+                                        .background(Color(.secondarySystemBackground))
                                         .clipShape(RoundedRectangle(cornerRadius: 12))
                                 }
                             }
@@ -68,7 +68,7 @@ struct RandomRecipeView: View {
                                             }
                                             .foregroundStyle(selectedCategories.contains(category) ? category.color : .secondary)
                                             .padding()
-                                            .background(.white)
+                                            .background(Color(.secondarySystemBackground))
                                             .clipShape(RoundedRectangle(cornerRadius: 12))
                                         }
                                     }
@@ -76,7 +76,7 @@ struct RandomRecipeView: View {
                             }
                         }
                         .padding()
-                        .background(Color(.systemGray6))
+                        .background(Color(.secondarySystemBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                         
                         // Generate Button
@@ -116,7 +116,7 @@ struct RandomRecipeView: View {
                                         )) {
                                             RecipeRowView(recipe: recipe)
                                                 .padding()
-                                                .background(.white)
+                                                .background(Color(.secondarySystemBackground))
                                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                                         }
                                     }
@@ -170,7 +170,7 @@ struct RandomRecipeView: View {
                 }
                 .padding(.vertical)
             }
-            .background(Color(.systemGray6))
+            .background(Color(.systemGroupedBackground))
             .navigationTitle("Recipe Randomizer")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

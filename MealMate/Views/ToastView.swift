@@ -5,14 +5,13 @@ struct ToastView: View {
     let icon: String
     
     var body: some View {
-        HStack(spacing: 12) {
+        HStack {
             Image(systemName: icon)
             Text(message)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .background(.thinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 10))
-        .shadow(radius: 5)
+        .padding()
+        .background(.ultraThinMaterial)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .shadow(radius: 4)
     }
 } 

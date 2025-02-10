@@ -13,11 +13,13 @@ struct AddShoppingItemView: View {
         NavigationStack {
             Form {
                 TextField("Item Name", text: $name)
+                    .textFieldStyle(.roundedBorder)
                     .capitalizedTextField(text: $name)
                 
                 HStack {
                     TextField("Amount", text: $amount)
                         .keyboardType(.decimalPad)
+                        .textFieldStyle(.roundedBorder)
                     
                     Picker("Unit", selection: $unit) {
                         ForEach(Ingredient.Unit.allCases, id: \.self) { unit in
@@ -26,6 +28,8 @@ struct AddShoppingItemView: View {
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(Color(.systemGroupedBackground))
             .navigationTitle("Add Item")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

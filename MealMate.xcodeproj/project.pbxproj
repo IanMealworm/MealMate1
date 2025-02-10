@@ -6,10 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		3F5EFB142D5928F200FDEFBF /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 3F5EFB132D5928F200FDEFBF /* KeychainSwift */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXContainerItemProxy section */
 		3FA976282D58E4BE00D7877F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -69,7 +65,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3F5EFB142D5928F200FDEFBF /* KeychainSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,7 +125,6 @@
 			);
 			name = MealMate;
 			packageProductDependencies = (
-				3F5EFB132D5928F200FDEFBF /* KeychainSwift */,
 			);
 			productName = MealMate;
 			productReference = 3FA976172D58E4BB00D7877F /* MealMate.app */;
@@ -215,7 +209,6 @@
 			mainGroup = 3FA9760E2D58E4BB00D7877F;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				3F5EFB122D5928F200FDEFBF /* XCRemoteSwiftPackageReference "keychain-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 3FA976182D58E4BB00D7877F /* Products */;
@@ -584,25 +577,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		3F5EFB122D5928F200FDEFBF /* XCRemoteSwiftPackageReference "keychain-swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/evgenyneu/keychain-swift.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 24.0.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		3F5EFB132D5928F200FDEFBF /* KeychainSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 3F5EFB122D5928F200FDEFBF /* XCRemoteSwiftPackageReference "keychain-swift" */;
-			productName = KeychainSwift;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3FA9760F2D58E4BB00D7877F /* Project object */;
 }

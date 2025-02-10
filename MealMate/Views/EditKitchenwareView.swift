@@ -18,7 +18,10 @@ struct EditKitchenwareView: View {
         NavigationStack {
             Form {
                 TextField("Kitchenware Name", text: $newName)
+                    .textFieldStyle(.roundedBorder)
             }
+            .scrollContentBackground(.hidden)
+            .background(Color(.systemGroupedBackground))
             .dismissKeyboardOnTap()
             .navigationTitle("Edit Kitchenware")
             .navigationBarTitleDisplayMode(.inline)

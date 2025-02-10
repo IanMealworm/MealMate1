@@ -20,6 +20,7 @@ struct EditShoppingItemView: View {
             Form {
                 Text(item.name)
                     .font(.headline)
+                    .foregroundStyle(.primary)
                 
                 HStack {
                     TextField("Amount", text: $amount)
@@ -55,6 +56,8 @@ struct EditShoppingItemView: View {
                     .disabled(amount.isEmpty)
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(Color(.systemGroupedBackground))
         }
         .presentationDetents([.medium])
     }

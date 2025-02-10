@@ -54,7 +54,7 @@ struct StepByStepView: View {
                         .foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity)
                         .frame(height: 44)
-                        .background(Color(.systemGray6))
+                        .background(Color(.tertiarySystemBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
                 }
@@ -85,7 +85,7 @@ struct StepByStepView: View {
                 }
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(recipe.category.color.opacity(0.1))
+                .background(Color(.secondarySystemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 
                 Spacer()

@@ -35,7 +35,7 @@ struct AddNewIngredientView: View {
                                 }
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 8)
-                                .background(selectedUnit == unit ? .purple : .white)
+                                .background(selectedUnit == unit ? .purple : Color(.secondarySystemBackground))
                                 .foregroundStyle(selectedUnit == unit ? .white : .primary)
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                             }
@@ -45,7 +45,7 @@ struct AddNewIngredientView: View {
                 .padding(.vertical, 4)
             }
             .padding()
-            .background(.white)
+            .background(Color(.secondarySystemBackground))
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }
     }
@@ -78,12 +78,12 @@ struct AddNewIngredientView: View {
                         }
                     }
                     .padding()
-                    .background(Color(.systemGray6))
+                    .background(Color(.tertiarySystemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
             }
             .padding()
-            .background(.white)
+            .background(Color(.secondarySystemBackground))
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }
     }
@@ -97,7 +97,7 @@ struct AddNewIngredientView: View {
                 }
                 .padding()
             }
-            .background(Color(.systemGray6))
+            .background(Color(.systemGroupedBackground))
             .navigationTitle("Add Ingredient")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

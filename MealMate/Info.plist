@@ -4,5 +4,78 @@
 <dict>
     <key>NSCameraUsageDescription</key>
     <string>MealMate needs access to your camera to take photos of your recipes.</string>
+    
+    <key>CFBundleDocumentTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeName</key>
+            <string>MealMate Recipe</string>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>LSHandlerRank</key>
+            <string>Owner</string>
+            <key>LSItemContentTypes</key>
+            <array>
+                <string>com.yourcompany.mealmate.recipe</string>
+            </array>
+            <key>LSSupportsOpeningDocumentsInPlace</key>
+            <true/>
+        </dict>
+    </array>
+    
+    <key>UTImportedTypeDeclarations</key>
+    <array>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>com.yourcompany.mealmate.recipe</string>
+            <key>UTTypeDescription</key>
+            <string>MealMate Recipe</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.data</string>
+                <string>public.content</string>
+            </array>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array>
+                    <string>mealmate</string>
+                </array>
+                <key>public.mime-type</key>
+                <array>
+                    <string>application/x-mealmate</string>
+                </array>
+            </dict>
+        </dict>
+    </array>
+    
+    <key>UTExportedTypeDeclarations</key>
+    <array>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>com.yourcompany.mealmate.recipe</string>
+            <key>UTTypeDescription</key>
+            <string>MealMate Recipe</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.data</string>
+                <string>public.content</string>
+            </array>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array>
+                    <string>mealmate</string>
+                </array>
+                <key>public.mime-type</key>
+                <array>
+                    <string>application/x-mealmate</string>
+                </array>
+            </dict>
+        </dict>
+    </array>
+    
+    <key>LSSupportsOpeningDocumentsInPlace</key>
+    <true/>
 </dict>
 </plist> 

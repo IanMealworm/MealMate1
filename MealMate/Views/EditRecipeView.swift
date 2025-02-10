@@ -70,7 +70,7 @@ struct EditRecipeView: View {
                             selectedItem: $selectedItem
                         )
                         .padding()
-                        .background(.white)
+                        .background(Color(.secondarySystemBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                     
@@ -120,7 +120,7 @@ struct EditRecipeView: View {
                             }
                         }
                         .padding()
-                        .background(.white)
+                        .background(Color(.secondarySystemBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                     
@@ -149,7 +149,7 @@ struct EditRecipeView: View {
                                     }
                                 }
                                 .padding()
-                                .background(Color(.systemGray6))
+                                .background(Color(.tertiarySystemBackground))
                                 .clipShape(RoundedRectangle(cornerRadius: 8))
                             }
                             
@@ -168,7 +168,7 @@ struct EditRecipeView: View {
                             }
                         }
                         .padding()
-                        .background(.white)
+                        .background(Color(.secondarySystemBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                     
@@ -217,7 +217,7 @@ struct EditRecipeView: View {
                                     }
                                 }
                                 .padding()
-                                .background(Color(.systemGray6))
+                                .background(Color(.tertiarySystemBackground))
                                 .clipShape(RoundedRectangle(cornerRadius: 8))
                             }
                             
@@ -236,7 +236,7 @@ struct EditRecipeView: View {
                             }
                         }
                         .padding()
-                        .background(.white)
+                        .background(Color(.secondarySystemBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                     
@@ -260,13 +260,13 @@ struct EditRecipeView: View {
                             )
                         }
                         .padding()
-                        .background(.white)
+                        .background(Color(.secondarySystemBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                 }
                 .padding()
             }
-            .background(Color(.systemGray6))
+            .background(Color(.systemGroupedBackground))
             .navigationTitle("Edit Recipe")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

@@ -44,72 +44,49 @@ struct ShoppingListView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
-                    if shoppingListStore.items.isEmpty {
-                        ContentUnavailableView(
-                            "No Items",
-                            systemImage: "cart",
-                            description: Text("Add items to your shopping list")
-                        )
-                    } else {
-                        ForEach(groupedItems, id: \.0) { section, items in
-                            VStack(alignment: .leading, spacing: 16) {
-                                // Section Header
-                                HStack {
-                                    Image(systemName: "cart.fill")
-                                        .foregroundStyle(.purple)
-                                    Text(section.uppercased())
-                                        .foregroundStyle(.purple)
-                                }
-                                .font(.headline)
-                                
-                                // Items
-                                VStack(spacing: 12) {
-                                    ForEach(items) { item in
-                                        Button {
-                                            shoppingListStore.toggleItem(item)
-                                        } label: {
-                                            HStack {
-                                                Image(systemName: item.isChecked ? "checkmark.square.fill" : "square")
-                                                    .foregroundStyle(item.isChecked ? .green : .secondary)
-                                                    .imageScale(.large)
-                                                
-                                                VStack(alignment: .leading) {
-                                                    Text(item.name)
-                                                        .strikethrough(item.isChecked)
-                                                    
-                                                    Text("\(String(format: "%.1f", item.amount)) \(item.unit.rawValue)")
-                                                        .font(.caption)
-                                                        .foregroundStyle(.purple)
-                                                }
-                                                .frame(maxWidth: .infinity, alignment: .leading)
-                                                
-                                                Button {
-                                                    editingItem = item
-                                                } label: {
-                                                    Image(systemName: "pencil.circle.fill")
-                                                        .foregroundStyle(.blue)
-                                                }
-                                                .buttonStyle(.plain)
-                                            }
-                                            .padding()
-                                            .background(.white)
-                                            .clipShape(RoundedRectangle(cornerRadius: 12))
+            ZStack {  // Added ZStack to ensure content doesn't overlap tab bar
+                Color(.systemGroupedBackground).ignoresSafeArea()
+                
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 24) {
+                        if shoppingListStore.items.isEmpty {
+                            ContentUnavailableView(
+                                "No Items",
+                                systemImage: "cart",
+                                description: Text("Add items to your shopping list")
+                            )
+                        } else {
+                            ForEach(groupedItems, id: \.0) { section, items in
+                                VStack(alignment: .leading, spacing: 16) {
+                                    // Section Header
+                                    HStack {
+                                        Image(systemName: "cart.fill")
+                                            .foregroundStyle(.purple)
+                                        Text(section.uppercased())
+                                            .foregroundStyle(.purple)
+                                    }
+                                    .font(.headline)
+                                    
+                                    // Items
+                                    VStack(spacing: 12) {
+                                        ForEach(items) { item in
+                                            ShoppingItemRow(item: item, onToggle: {
+                                                shoppingListStore.toggleItem(item)
+                                            }, onEdit: {
+                                                editingItem = item
+                                            })
                                         }
-                                        .buttonStyle(.plain)
                                     }
                                 }
+                                .padding()
+                                .background(Color(.tertiarySystemBackground))
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
                             }
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
                     }
+                    .padding()
                 }
-                .padding()
             }
-            .background(Color(.systemGray6))
             .navigationTitle("Shopping List")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -187,9 +164,7 @@ struct ShoppingItemRow: View {
     let onEdit: () -> Void
     
     var body: some View {
-        Button {
-            onToggle()
-        } label: {
+        Button(action: onToggle) {
             HStack {
                 Image(systemName: item.isChecked ? "checkmark.square.fill" : "square")
                     .foregroundStyle(item.isChecked ? .green : .secondary)
@@ -198,24 +173,22 @@ struct ShoppingItemRow: View {
                 VStack(alignment: .leading) {
                     Text(item.name)
                         .strikethrough(item.isChecked)
-                        .foregroundStyle(.primary)
                     
                     Text("\(String(format: "%.1f", item.amount)) \(item.unit.rawValue)")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.purple)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 
-                Spacer()
-                
-                Button {
-                    onEdit()
-                } label: {
+                Button(action: onEdit) {
                     Image(systemName: "pencil.circle.fill")
                         .foregroundStyle(.blue)
                 }
                 .buttonStyle(.plain)
             }
-            .contentShape(Rectangle())
+            .padding()
+            .background(Color(.secondarySystemBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 12))
         }
         .buttonStyle(.plain)
     }

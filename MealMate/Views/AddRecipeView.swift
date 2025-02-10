@@ -52,7 +52,7 @@ struct AddRecipeView: View {
                             selectedItem: $selectedItem
                         )
                         .padding()
-                        .background(.white)
+                        .background(Color(.secondarySystemBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                     
@@ -82,7 +82,7 @@ struct AddRecipeView: View {
                                             Label(category.rawValue, systemImage: category.icon)
                                                 .padding(.horizontal, 12)
                                                 .padding(.vertical, 8)
-                                                .background(selectedCategory == category ? category.color : .white)
+                                                .background(selectedCategory == category ? category.color : Color(.secondarySystemBackground))
                                                 .foregroundStyle(selectedCategory == category ? .white : .primary)
                                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                                         }
@@ -102,7 +102,7 @@ struct AddRecipeView: View {
                             }
                         }
                         .padding()
-                        .background(.white)
+                        .background(Color(.secondarySystemBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                     
@@ -150,7 +150,7 @@ struct AddRecipeView: View {
                             }
                         }
                         .padding()
-                        .background(.white)
+                        .background(Color(.secondarySystemBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                     
@@ -218,7 +218,7 @@ struct AddRecipeView: View {
                             }
                         }
                         .padding()
-                        .background(.white)
+                        .background(Color(.secondarySystemBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                     
@@ -242,13 +242,13 @@ struct AddRecipeView: View {
                             )
                         }
                         .padding()
-                        .background(.white)
+                        .background(Color(.secondarySystemBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                 }
                 .padding()
             }
-            .background(Color(.systemGray6))
+            .background(Color(.systemGroupedBackground))
             .navigationTitle("New Recipe")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

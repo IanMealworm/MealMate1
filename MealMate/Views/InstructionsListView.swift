@@ -63,15 +63,15 @@ struct InstructionsListView: View {
                                 .font(.subheadline)
                             }
                         }
-                        .padding(.vertical, 12)
-                        .padding(.horizontal, 16)
+                        .padding()
                         .frame(maxWidth: .infinity)
-                        .background(Color(.systemGray5))
+                        .background(Color(.tertiarySystemBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
                 }
                 .padding()
-                .background(Color(.systemGray6))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color(.secondarySystemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 12))
             }
             

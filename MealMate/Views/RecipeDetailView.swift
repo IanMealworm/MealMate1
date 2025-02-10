@@ -1,5 +1,6 @@
 import SwiftUI
 import PhotosUI
+import UniformTypeIdentifiers
 
 struct RecipeDetailView: View {
     @ObservedObject var recipeStore: RecipeStore
@@ -8,6 +9,8 @@ struct RecipeDetailView: View {
     @State private var showingStepByStep = false
     @State private var showingEditSheet = false
     @State private var showingToast = false
+    @State private var showingShareSheet = false
+    @State private var exportURL: URL?
     
     init(recipe: Recipe, recipeStore: RecipeStore, shoppingListStore: ShoppingListStore) {
         self.recipe = recipe
@@ -78,20 +81,55 @@ struct RecipeDetailView: View {
                         }
                         .padding()
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .background(.white)
+                        .background(Color(.secondarySystemBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
+                    
+                    // Kitchenware Section
+                    VStack(alignment: .leading, spacing: 16) {
+                        HStack {
+                            Image(systemName: "kitchen.utensils")
+                                .foregroundStyle(currentRecipe.category.color)
+                            Text("KITCHENWARE")
+                                .foregroundStyle(currentRecipe.category.color)
+                        }
+                        .font(.headline)
+                        
+                        if currentRecipe.kitchenware.isEmpty {
+                            Text("No kitchenware needed")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color(.secondarySystemBackground))
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                        } else {
+                            VStack(spacing: 12) {
+                                ForEach(currentRecipe.kitchenware, id: \.self) { item in
+                                    HStack {
+                                        Text(item)
+                                        Spacer()
+                                        Image(systemName: "checkmark.circle")
+                                            .foregroundStyle(currentRecipe.category.color)
+                                    }
+                                    .padding()
+                                    .background(Color(.tertiarySystemBackground))
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                                }
+                            }
+                        }
+                    }
+                    .padding()
+                    .background(Color(.secondarySystemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                     
                     // Ingredients Section
                     VStack(alignment: .leading, spacing: 16) {
                         HStack {
-                            HStack {
-                                Image(systemName: "carrot.fill")
-                                    .foregroundStyle(currentRecipe.category.color)
-                                Text("INGREDIENTS")
-                                    .foregroundStyle(currentRecipe.category.color)
-                            }
-                            .font(.headline)
+                            Image(systemName: "carrot.fill")
+                                .foregroundStyle(currentRecipe.category.color)
+                            Text("INGREDIENTS")
+                                .foregroundStyle(currentRecipe.category.color)
                             
                             Spacer()
                             
@@ -117,33 +155,28 @@ struct RecipeDetailView: View {
                                     .clipShape(Capsule())
                             }
                         }
+                        .font(.headline)
                         
-                        VStack(alignment: .leading, spacing: 12) {
-                            Label("Ingredients", systemImage: "basket")
-                                .font(.headline)
-                                .foregroundStyle(currentRecipe.category.color)
-                            
-                            VStack(spacing: 12) {
-                                ForEach(currentRecipe.ingredients) { ingredient in
-                                    HStack {
-                                        Text(ingredient.name)
-                                            .font(.subheadline)
-                                        Spacer()
-                                        Text("\(String(format: "%.1f", ingredient.amount)) \(ingredient.unit.rawValue)")
-                                            .font(.subheadline)
-                                            .foregroundStyle(currentRecipe.category.color)
-                                    }
-                                    .padding()
-                                    .frame(maxWidth: .infinity)
-                                    .background(currentRecipe.category.color.opacity(0.1))
-                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                        VStack(spacing: 12) {
+                            ForEach(currentRecipe.ingredients) { ingredient in
+                                HStack {
+                                    Text(ingredient.name)
+                                        .font(.subheadline)
+                                    Spacer()
+                                    Text("\(String(format: "%.1f", ingredient.amount)) \(ingredient.unit.rawValue)")
+                                        .font(.subheadline)
+                                        .foregroundStyle(currentRecipe.category.color)
                                 }
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color(.tertiarySystemBackground))
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
                             }
                         }
-                        .padding()
-                        .background(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
+                    .padding()
+                    .background(Color(.secondarySystemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
                     
                     // Instructions Section
                     VStack(alignment: .leading, spacing: 16) {
@@ -217,14 +250,14 @@ struct RecipeDetailView: View {
                                             }
                                             .padding()
                                             .frame(maxWidth: .infinity)
-                                            .background(currentRecipe.category.color.opacity(0.1))
+                                            .background(Color(.secondarySystemBackground))
                                             .clipShape(RoundedRectangle(cornerRadius: 8))
                                         }
                                     }
                                 }
                                 .padding()
                                 .frame(maxWidth: .infinity)
-                                .background(.white)
+                                .background(Color(.secondarySystemBackground))
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                             }
                         }
@@ -233,12 +266,22 @@ struct RecipeDetailView: View {
                 .padding(.horizontal)
             }
         }
-        .background(Color(.systemGray6))
+        .background(Color(.systemGroupedBackground))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button("Edit") {
-                    showingEditSheet = true
+                Menu {
+                    Button {
+                        exportRecipe()
+                    } label: {
+                        Label("Export Recipe", systemImage: "square.and.arrow.up")
+                    }
+                    
+                    Button("Edit") {
+                        showingEditSheet = true
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
                 }
             }
         }
@@ -252,6 +295,11 @@ struct RecipeDetailView: View {
                 recipe: currentRecipe
             )
         }
+        .sheet(isPresented: $showingShareSheet) {
+            if let url = exportURL {
+                ShareSheet(items: [url])
+            }
+        }
         .overlay(alignment: .bottom) {
             if showingToast {
                 ToastView(
@@ -261,6 +309,34 @@ struct RecipeDetailView: View {
                 .transition(.move(edge: .bottom).combined(with: .opacity))
                 .padding(.bottom, 32)
             }
+        }
+    }
+    
+    private func exportRecipe() {
+        do {
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .prettyPrinted
+            let data = try encoder.encode(currentRecipe)
+            
+            let tempURL = FileManager.default.temporaryDirectory
+                .appendingPathComponent(currentRecipe.name.replacingOccurrences(of: " ", with: "_"))
+                .appendingPathExtension("mealmate")
+            
+            try data.write(to: tempURL)
+            
+            let activityVC = UIActivityViewController(
+                activityItems: [tempURL],
+                applicationActivities: nil
+            )
+            
+            if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+               let window = windowScene.windows.first,
+               let rootVC = window.rootViewController {
+                activityVC.popoverPresentationController?.sourceView = rootVC.view
+                rootVC.present(activityVC, animated: true)
+            }
+        } catch {
+            print("Error exporting recipe: \(error.localizedDescription)")
         }
     }
 } 

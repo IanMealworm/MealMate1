@@ -22,7 +22,7 @@ struct KitchenwareSelectionView: View {
                     .foregroundStyle(.secondary)
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(.white)
+                    .background(Color(.secondarySystemBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 12))
             } else {
                 VStack(spacing: 12) {
@@ -38,12 +38,12 @@ struct KitchenwareSelectionView: View {
                             }
                         }
                         .padding()
-                        .background(Color(.systemGray6))
+                        .background(Color(.secondarySystemBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
                 }
                 .padding()
-                .background(.white)
+                .background(Color(.secondarySystemBackground))
                 .clipShape(RoundedRectangle(cornerRadius: 12))
             }
         }
@@ -75,14 +75,14 @@ struct KitchenwareSelectionView: View {
                                 .foregroundStyle(selectedKitchenware.contains(item) ? .purple : .secondary)
                         }
                         .padding()
-                        .background(.white)
+                        .background(Color(.secondarySystemBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
                     .buttonStyle(.plain)
                 }
             }
             .padding()
-            .background(Color(.systemGray6))
+            .background(Color(.tertiarySystemBackground))
             .clipShape(RoundedRectangle(cornerRadius: 12))
         }
     }
@@ -96,7 +96,7 @@ struct KitchenwareSelectionView: View {
                 }
                 .padding()
             }
-            .background(Color(.systemGray6))
+            .background(Color(.systemGroupedBackground))
             .navigationTitle("Select Kitchenware")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -115,7 +115,7 @@ struct KitchenwareSelectionView: View {
                 }
             }
             .sheet(isPresented: $showingAddNew) {
-                AddKitchenwareView(kitchenwareStore: kitchenwareStore)
+                AddNewKitchenwareView(kitchenwareStore: kitchenwareStore)
             }
         }
     }
