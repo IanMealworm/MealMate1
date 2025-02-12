@@ -3,12 +3,14 @@ import UniformTypeIdentifiers
 
 enum Tab {
     case recipes
+    case books
     case shoppingList
 }
 
 struct ContentView: View {
     @ObservedObject var recipeStore: RecipeStore
     @ObservedObject var shoppingListStore: ShoppingListStore
+    @ObservedObject var recipeBookStore: RecipeBookStore
     @State private var selectedTab: Tab = .recipes
     
     var body: some View {
@@ -21,6 +23,16 @@ struct ContentView: View {
                 Label("Recipes", systemImage: "book")
             }
             .tag(Tab.recipes)
+            
+            RecipeBooksView(
+                recipeBookStore: recipeBookStore,
+                recipeStore: recipeStore,
+                shoppingListStore: shoppingListStore
+            )
+            .tabItem {
+                Label("Books", systemImage: "books.vertical.fill")
+            }
+            .tag(Tab.books)
             
             ShoppingListView(shoppingListStore: shoppingListStore)
                 .tabItem {
@@ -35,6 +47,7 @@ struct ContentView: View {
 #Preview {
     ContentView(
         recipeStore: RecipeStore(),
-        shoppingListStore: ShoppingListStore()
+        shoppingListStore: ShoppingListStore(),
+        recipeBookStore: RecipeBookStore()
     )
 }

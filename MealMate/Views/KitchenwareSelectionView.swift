@@ -6,6 +6,10 @@ struct KitchenwareSelectionView: View {
     @Binding var selectedKitchenware: [String]
     @State private var showingAddNew = false
     
+    private var availableItems: [String] {
+        kitchenwareStore.kitchenware.filter { !selectedKitchenware.contains($0) }
+    }
+    
     private var selectedItemsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
@@ -60,7 +64,7 @@ struct KitchenwareSelectionView: View {
             .font(.headline)
             
             VStack(spacing: 12) {
-                ForEach(kitchenwareStore.items, id: \.self) { item in
+                ForEach(availableItems, id: \.self) { item in
                     Button {
                         if selectedKitchenware.contains(item) {
                             selectedKitchenware.removeAll { $0 == item }

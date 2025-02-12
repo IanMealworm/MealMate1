@@ -2,12 +2,15 @@ import Foundation
 
 @MainActor
 class KitchenwareStore: ObservableObject {
-    @Published private(set) var items: [String]
+    @Published private var items: [String] = []
     private let kitchenwareKey = "SavedKitchenware"
     
-    init() {
-        self.items = []
-        loadItems()
+    var kitchenware: [String] { items }
+    
+    nonisolated init() {
+        Task { @MainActor in
+            self.loadItems()
+        }
     }
     
     func addItem(_ item: String) {

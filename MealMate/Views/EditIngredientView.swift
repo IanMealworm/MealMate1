@@ -14,9 +14,9 @@ struct EditIngredientView: View {
         self.originalName = originalName
         self._selectedIngredients = selectedIngredients
         
-        // Initialize state
+        // Initialize state with current values
         _name = State(initialValue: originalName)
-        _selectedUnit = State(initialValue: ingredientStore.defaultUnits[originalName] ?? .piece)
+        _selectedUnit = State(initialValue: ingredientStore.units[originalName] ?? .piece)
     }
     
     var body: some View {

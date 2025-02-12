@@ -21,6 +21,22 @@
             <key>LSSupportsOpeningDocumentsInPlace</key>
             <true/>
         </dict>
+        <dict>
+            <key>CFBundleTypeName</key>
+            <string>MealMate Recipe Book</string>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>LSHandlerRank</key>
+            <string>Owner</string>
+            <key>LSItemContentTypes</key>
+            <array>
+                <string>com.yourcompany.mealmate.recipebook</string>
+            </array>
+            <key>NSUbiquitousDocumentUserActivityType</key>
+            <string>$(PRODUCT_BUNDLE_IDENTIFIER).recipebook</string>
+            <key>LSSupportsOpeningDocumentsInPlace</key>
+            <true/>
+        </dict>
     </array>
     
     <key>UTImportedTypeDeclarations</key>
@@ -47,6 +63,28 @@
                 </array>
             </dict>
         </dict>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>com.yourcompany.mealmate.recipebook</string>
+            <key>UTTypeDescription</key>
+            <string>MealMate Recipe Book</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.data</string>
+                <string>public.content</string>
+            </array>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array>
+                    <string>mealmatebook</string>
+                </array>
+                <key>public.mime-type</key>
+                <array>
+                    <string>application/x-mealmatebook</string>
+                </array>
+            </dict>
+        </dict>
     </array>
     
     <key>UTExportedTypeDeclarations</key>
@@ -70,6 +108,28 @@
                 <key>public.mime-type</key>
                 <array>
                     <string>application/x-mealmate</string>
+                </array>
+            </dict>
+        </dict>
+        <dict>
+            <key>UTTypeIdentifier</key>
+            <string>com.yourcompany.mealmate.recipebook</string>
+            <key>UTTypeDescription</key>
+            <string>MealMate Recipe Book</string>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.data</string>
+                <string>public.content</string>
+            </array>
+            <key>UTTypeTagSpecification</key>
+            <dict>
+                <key>public.filename-extension</key>
+                <array>
+                    <string>mealmatebook</string>
+                </array>
+                <key>public.mime-type</key>
+                <array>
+                    <string>application/x-mealmatebook</string>
                 </array>
             </dict>
         </dict>

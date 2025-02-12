@@ -4,16 +4,26 @@ import SwiftUI
 @MainActor
 class RecipeStore: ObservableObject {
     @Published private(set) var recipes: [Recipe] = []
+    let ingredientStore: IngredientStore
+    let kitchenwareStore: KitchenwareStore
     private let filename = "SavedRecipes.json"
     private let oldSaveKey = "SavedRecipes"
     
-    init() {
-        // First try to load from file
-        if let loadedRecipes = FileStorage.load([Recipe].self, from: filename) {
-            recipes = loadedRecipes
-        } else {
-            // If file doesn't exist, try to migrate from UserDefaults
-            migrateFromUserDefaults()
+    nonisolated init(
+        ingredientStore: IngredientStore? = nil,
+        kitchenwareStore: KitchenwareStore? = nil
+    ) {
+        self.ingredientStore = ingredientStore ?? IngredientStore()
+        self.kitchenwareStore = kitchenwareStore ?? KitchenwareStore()
+        
+        Task { @MainActor in
+            // First try to load from file
+            if let loadedRecipes = FileStorage.load([Recipe].self, from: self.filename) {
+                self.recipes = loadedRecipes
+            } else {
+                // If file doesn't exist, try to migrate from UserDefaults
+                self.migrateFromUserDefaults()
+            }
         }
     }
     

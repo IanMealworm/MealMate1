@@ -2,13 +2,18 @@ import Foundation
 
 @MainActor
 class IngredientStore: ObservableObject {
-    @Published private(set) var savedIngredients: Set<String> = []
-    @Published private(set) var defaultUnits: [String: Ingredient.Unit] = [:]
+    @Published private var savedIngredients: Set<String> = []
+    @Published private var defaultUnits: [String: Ingredient.Unit] = [:]
     private let ingredientsKey = "SavedIngredients"
     private let defaultUnitsKey = "DefaultUnits"
     
-    init() {
-        loadItems()
+    var ingredients: Set<String> { savedIngredients }
+    var units: [String: Ingredient.Unit] { defaultUnits }
+    
+    nonisolated init() {
+        Task { @MainActor in
+            self.loadItems()
+        }
     }
     
     func addIngredient(_ name: String, defaultUnit: Ingredient.Unit = .piece) {

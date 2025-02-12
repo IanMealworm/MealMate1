@@ -9,24 +9,35 @@ struct RecipesView: View {
     @State private var showFavoritesOnly = false
     @State private var showingRandomizer = false
     @State private var showingImporter = false
+    @State private var searchText = ""
     @StateObject private var ingredientStore = IngredientStore()
     @StateObject private var kitchenwareStore = KitchenwareStore()
     
     // Break down the filtering into smaller functions
-    private func filterByFavorites(_ recipes: [Recipe]) -> [Recipe] {
-        guard showFavoritesOnly else { return recipes }
-        return recipes.filter { $0.isFavorite }
-    }
-    
     private func filterByCategory(_ recipes: [Recipe]) -> [Recipe] {
         guard let category = selectedCategory else { return recipes }
         return recipes.filter { $0.category == category }
     }
     
-    var filteredRecipes: [Recipe] {
-        let recipes = recipeStore.recipes
-        let favoritesFiltered = filterByFavorites(recipes)
-        return filterByCategory(favoritesFiltered)
+    private func filterByFavorites(_ recipes: [Recipe]) -> [Recipe] {
+        guard showFavoritesOnly else { return recipes }
+        return recipes.filter { $0.isFavorite }
+    }
+    
+    private func filterBySearch(_ recipes: [Recipe], searchText: String) -> [Recipe] {
+        guard !searchText.isEmpty else { return recipes }
+        return recipes.filter {
+            $0.name.localizedCaseInsensitiveContains(searchText) ||
+            $0.description.localizedCaseInsensitiveContains(searchText)
+        }
+    }
+    
+    private func filteredRecipes(searchText: String) -> [Recipe] {
+        var result = recipeStore.recipes
+        result = filterByCategory(result)
+        result = filterByFavorites(result)
+        result = filterBySearch(result, searchText: searchText)
+        return result
     }
     
     private func makeRecipeRow(_ recipe: Recipe) -> some View {
@@ -61,81 +72,15 @@ struct RecipesView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 24) {
-                    // Categories Section
-                    VStack(alignment: .leading, spacing: 16) {
-                        HStack {
-                            Image(systemName: "tag.fill")
-                                .foregroundStyle(.purple)
-                            Text("CATEGORIES")
-                                .foregroundStyle(.purple)
-                        }
-                        .font(.headline)
-                        .padding(.horizontal)
-                        
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 12) {
-                                Button {
-                                    showFavoritesOnly.toggle()
-                                } label: {
-                                    Label("Favorites", systemImage: showFavoritesOnly ? "heart.fill" : "heart")
-                                        .padding(.horizontal, 12)
-                                        .padding(.vertical, 8)
-                                        .background(showFavoritesOnly ? .red : Color(.secondarySystemBackground))
-                                        .foregroundStyle(showFavoritesOnly ? .white : .primary)
-                                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                                }
-                                
-                                ForEach(Recipe.Category.allCases, id: \.self) { category in
-                                    Button {
-                                        selectedCategory = selectedCategory == category ? nil : category
-                                    } label: {
-                                        Label(category.rawValue, systemImage: category.icon)
-                                            .padding(.horizontal, 12)
-                                            .padding(.vertical, 8)
-                                            .background(selectedCategory == category ? category.color : Color(.secondarySystemBackground))
-                                            .foregroundStyle(selectedCategory == category ? .white : .primary)
-                                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                                    }
-                                }
-                            }
-                            .padding(.horizontal)
-                        }
-                    }
-                    
-                    // Recipes Section
-                    VStack(alignment: .leading, spacing: 16) {
-                        HStack {
-                            Image(systemName: "book.fill")
-                                .foregroundStyle(.purple)
-                            Text("MY RECIPES")
-                                .foregroundStyle(.purple)
-                        }
-                        .font(.headline)
-                        .padding(.horizontal)
-                        
-                        if filteredRecipes.isEmpty {
-                            ContentUnavailableView(
-                                "No Recipes",
-                                systemImage: "book",
-                                description: Text("Add your first recipe to get started")
-                            )
-                            .padding()
-                        } else {
-                            VStack(spacing: 12) {
-                                ForEach(filteredRecipes) { recipe in
-                                    makeRecipeRow(recipe)
-                                }
-                            }
-                            .padding(.horizontal)
-                        }
-                    }
-                }
-                .padding(.vertical)
-            }
-            .background(Color(.systemGroupedBackground))
-            .navigationTitle("My Recipes")
+            RecipeListView(
+                recipes: filteredRecipes(searchText: searchText),
+                recipeStore: recipeStore,
+                shoppingListStore: shoppingListStore,
+                selectedCategory: $selectedCategory,
+                showFavoritesOnly: $showFavoritesOnly,
+                searchText: $searchText
+            )
+            .navigationTitle("Recipes")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
@@ -193,7 +138,7 @@ struct RecipesView: View {
                             
                             // Import ingredients
                             for ingredient in recipe.ingredients {
-                                if !ingredientStore.savedIngredients.contains(ingredient.name) {
+                                if !ingredientStore.ingredients.contains(ingredient.name) {
                                     ingredientStore.addIngredient(
                                         ingredient.name,
                                         defaultUnit: ingredient.unit
@@ -203,7 +148,7 @@ struct RecipesView: View {
                             
                             // Import kitchenware
                             for item in recipe.kitchenware {
-                                if !kitchenwareStore.items.contains(item) {
+                                if !kitchenwareStore.kitchenware.contains(item) {
                                     kitchenwareStore.addKitchenware(item)
                                 }
                             }
@@ -218,6 +163,126 @@ struct RecipesView: View {
                 case .failure(let error):
                     print("Error selecting files: \(error.localizedDescription)")
                 }
+            }
+        }
+    }
+}
+
+// Move RecipeListView to a separate component
+struct RecipeListView: View {
+    let recipes: [Recipe]
+    let recipeStore: RecipeStore
+    let shoppingListStore: ShoppingListStore
+    @Binding var selectedCategory: Recipe.Category?
+    @Binding var showFavoritesOnly: Bool
+    @Binding var searchText: String
+    
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 24) {
+                // Add SearchBar at the top
+                SearchBar(text: $searchText, placeholder: "Search recipes...")
+                    .padding(.horizontal)
+                
+                // Categories Section
+                VStack(alignment: .leading, spacing: 16) {
+                    HStack {
+                        Image(systemName: "tag.fill")
+                            .foregroundStyle(.purple)
+                        Text("CATEGORIES")
+                            .foregroundStyle(.purple)
+                    }
+                    .font(.headline)
+                    .padding(.horizontal)
+                    
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            Button {
+                                showFavoritesOnly.toggle()
+                            } label: {
+                                Label("Favorites", systemImage: showFavoritesOnly ? "heart.fill" : "heart")
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 8)
+                                    .background(showFavoritesOnly ? .red : Color(.secondarySystemBackground))
+                                    .foregroundStyle(showFavoritesOnly ? .white : .primary)
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                            }
+                            
+                            ForEach(Recipe.Category.allCases, id: \.self) { category in
+                                Button {
+                                    selectedCategory = selectedCategory == category ? nil : category
+                                } label: {
+                                    Label(category.rawValue, systemImage: category.icon)
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 8)
+                                        .background(selectedCategory == category ? category.color : Color(.secondarySystemBackground))
+                                        .foregroundStyle(selectedCategory == category ? .white : .primary)
+                                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                                }
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                }
+                
+                // Recipes Section
+                VStack(alignment: .leading, spacing: 16) {
+                    HStack {
+                        Image(systemName: "book.fill")
+                            .foregroundStyle(.purple)
+                        Text("MY RECIPES")
+                            .foregroundStyle(.purple)
+                    }
+                    .font(.headline)
+                    .padding(.horizontal)
+                    
+                    if recipes.isEmpty {
+                        ContentUnavailableView(
+                            "No Recipes",
+                            systemImage: "book",
+                            description: Text("Add your first recipe to get started")
+                        )
+                        .padding()
+                    } else {
+                        VStack(spacing: 12) {
+                            ForEach(recipes) { recipe in
+                                makeRecipeRow(recipe)
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                }
+            }
+            .padding(.vertical)
+        }
+    }
+    
+    private func makeRecipeRow(_ recipe: Recipe) -> some View {
+        NavigationLink(destination: RecipeDetailView(
+            recipe: recipe,
+            recipeStore: recipeStore,
+            shoppingListStore: shoppingListStore
+        )) {
+            RecipeRowView(recipe: recipe)
+                .padding()
+                .background(Color(.secondarySystemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+        }
+        .contextMenu {
+            NavigationLink {
+                EditRecipeView(
+                    recipeStore: recipeStore,
+                    shoppingListStore: shoppingListStore,
+                    recipe: recipe
+                )
+            } label: {
+                Label("Edit", systemImage: "pencil")
+            }
+            
+            Button(role: .destructive) {
+                recipeStore.deleteRecipe(recipe)
+            } label: {
+                Label("Delete", systemImage: "trash")
             }
         }
     }

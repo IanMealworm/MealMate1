@@ -11,12 +11,14 @@ import SwiftUI
 struct MealMateApp: App {
     @StateObject private var recipeStore = RecipeStore()
     @StateObject private var shoppingListStore = ShoppingListStore()
+    @StateObject private var recipeBookStore = RecipeBookStore()
     
     var body: some Scene {
         WindowGroup {
             ContentView(
                 recipeStore: recipeStore,
-                shoppingListStore: shoppingListStore
+                shoppingListStore: shoppingListStore,
+                recipeBookStore: recipeBookStore
             )
             .onOpenURL { url in
                 print("Attempting to open URL: \(url)")
@@ -37,11 +39,25 @@ struct MealMateApp: App {
             try FileManager.default.copyItem(at: url, to: tempURL)
             
             let data = try Data(contentsOf: tempURL)
-            let recipe = try JSONDecoder().decode(Recipe.self, from: data)
             
-            Task { @MainActor in
-                recipeStore.addRecipe(recipe)
-                print("Successfully imported recipe: \(recipe.name)")
+            // Check file extension to determine type
+            switch url.pathExtension.lowercased() {
+            case "mealmate":
+                let recipe = try JSONDecoder().decode(Recipe.self, from: data)
+                Task { @MainActor in
+                    recipeStore.addRecipe(recipe)
+                    print("Successfully imported recipe: \(recipe.name)")
+                }
+                
+            case "mealmatebook":
+                let book = try JSONDecoder().decode(RecipeBook.self, from: data)
+                Task { @MainActor in
+                    recipeBookStore.addBook(book)
+                    print("Successfully imported recipe book: \(book.name)")
+                }
+                
+            default:
+                print("Unsupported file type: \(url.pathExtension)")
             }
         } catch {
             print("Error handling incoming URL: \(error.localizedDescription)")

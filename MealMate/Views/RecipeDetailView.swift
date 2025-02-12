@@ -113,7 +113,11 @@ struct RecipeDetailView: View {
                                             .foregroundStyle(currentRecipe.category.color)
                                     }
                                     .padding()
-                                    .background(Color(.tertiarySystemBackground))
+                                    .background(.background)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(currentRecipe.category.color.opacity(0.2), lineWidth: 1)
+                                    )
                                     .clipShape(RoundedRectangle(cornerRadius: 8))
                                 }
                             }
@@ -169,7 +173,11 @@ struct RecipeDetailView: View {
                                 }
                                 .padding()
                                 .frame(maxWidth: .infinity)
-                                .background(Color(.tertiarySystemBackground))
+                                .background(.background)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(currentRecipe.category.color.opacity(0.2), lineWidth: 1)
+                                )
                                 .clipShape(RoundedRectangle(cornerRadius: 8))
                             }
                         }

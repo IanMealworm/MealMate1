@@ -61,17 +61,19 @@ struct AddNewIngredientView: View {
             .font(.headline)
             
             VStack(spacing: 12) {
-                ForEach(Array(ingredientStore.savedIngredients).sorted(), id: \.self) { item in
+                ForEach(Array(ingredientStore.ingredients), id: \.self) { ingredient in
                     HStack {
                         VStack(alignment: .leading) {
-                            Text(item)
-                            Text(ingredientStore.defaultUnits[item]?.rawValue ?? "piece")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                            Text(ingredient)
+                            if let defaultUnit = ingredientStore.units[ingredient] {
+                                Text(defaultUnit.rawValue)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                         Spacer()
                         Button {
-                            ingredientStore.deleteIngredient(item)
+                            ingredientStore.deleteIngredient(ingredient)
                         } label: {
                             Image(systemName: "xmark.circle.fill")
                                 .foregroundStyle(.red)

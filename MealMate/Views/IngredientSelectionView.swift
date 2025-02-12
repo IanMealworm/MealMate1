@@ -13,139 +13,57 @@ struct IngredientSelectionView: View {
     @ObservedObject var ingredientStore: IngredientStore
     @Binding var selectedIngredients: [Ingredient]
     @State private var showingAddNew = false
-    @State private var showingQuantityInput = false
+    @State private var showingAmountPrompt = false
     @State private var selectedName = ""
-    @State private var tempAmount = ""
-    @State private var selectedUnit: Ingredient.Unit = .piece
-    @State private var showingEditIngredient = false
-    @State private var editingName = ""
-    @State private var editingUnit: Ingredient.Unit = .piece
-    @State private var originalName = ""
     @State private var editingIngredient: EditingIngredient?
     
-    private var selectedNames: Set<String> {
-        Set(selectedIngredients.map { $0.name })
+    private var headerSection: some View {
+        HStack {
+            Image(systemName: "carrot.fill")
+                .foregroundStyle(.purple)
+            Text("SELECT INGREDIENTS")
+                .foregroundStyle(.purple)
+        }
+        .font(.headline)
     }
     
-    private var selectedItemsSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack {
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundStyle(.purple)
-                Text("SELECTED INGREDIENTS")
-                    .foregroundStyle(.purple)
+    private var selectedIngredientsSection: some View {
+        VStack(spacing: 12) {
+            ForEach(selectedIngredients) { ingredient in
+                HStack {
+                    Text(ingredient.name)
+                    Spacer()
+                    Text("\(String(format: "%.1f", ingredient.amount)) \(ingredient.unit.rawValue)")
+                        .foregroundStyle(.secondary)
+                }
+                .padding()
+                .background(Color(.tertiarySystemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
             }
-            .font(.headline)
-            
-            if selectedIngredients.isEmpty {
-                Text("No ingredients selected")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color(.secondarySystemBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-            } else {
-                VStack(spacing: 12) {
-                    ForEach(selectedIngredients) { ingredient in
+        }
+    }
+    
+    private var availableIngredientsSection: some View {
+        VStack(spacing: 12) {
+            ForEach(Array(ingredientStore.ingredients), id: \.self) { name in
+                if !selectedIngredients.contains(where: { $0.name == name }) {
+                    Button {
+                        selectedName = name
+                        showingAmountPrompt = true
+                    } label: {
                         HStack {
-                            VStack(alignment: .leading) {
-                                Text(ingredient.name)
-                                Text("\(String(format: "%.1f", ingredient.amount)) \(ingredient.unit.rawValue)")
-                                    .font(.caption)
-                                    .foregroundStyle(.purple)
-                            }
-                            
+                            Text(name)
                             Spacer()
-                            
-                            HStack(spacing: 12) {
-                                Button {
-                                    selectedName = ingredient.name
-                                    tempAmount = String(format: "%.1f", ingredient.amount)
-                                    selectedUnit = ingredient.unit
-                                    showingQuantityInput = true
-                                } label: {
-                                    Image(systemName: "pencil.circle.fill")
-                                        .foregroundStyle(.blue)
-                                }
-                                
-                                Button {
-                                    selectedIngredients.removeAll { $0.id == ingredient.id }
-                                } label: {
-                                    Image(systemName: "xmark.circle.fill")
-                                        .foregroundStyle(.red)
-                                }
-                            }
+                            Image(systemName: "plus.circle.fill")
+                                .foregroundStyle(.purple)
                         }
                         .padding()
                         .background(Color(.tertiarySystemBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                     }
-                }
-                .padding()
-                .background(Color(.secondarySystemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-            }
-        }
-    }
-    
-    private var availableItemsSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack {
-                Image(systemName: "carrot.fill")
-                    .foregroundStyle(.purple)
-                Text("AVAILABLE INGREDIENTS")
-                    .foregroundStyle(.purple)
-            }
-            .font(.headline)
-            
-            VStack(spacing: 12) {
-                ForEach(Array(ingredientStore.savedIngredients).sorted(), id: \.self) { item in
-                    HStack {
-                        Button {
-                            selectedName = item
-                            selectedUnit = ingredientStore.defaultUnits[item] ?? .piece
-                            tempAmount = "1.0"
-                            showingQuantityInput = true
-                        } label: {
-                            HStack {
-                                VStack(alignment: .leading) {
-                                    Text(item)
-                                    Text(ingredientStore.defaultUnits[item]?.rawValue ?? "piece")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-                                Spacer()
-                                Image(systemName: selectedNames.contains(item) ? "checkmark.circle.fill" : "plus.circle")
-                                    .foregroundStyle(selectedNames.contains(item) ? .purple : .blue)
-                            }
-                            .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain)
-                        
-                        Button {
-                            editingIngredient = EditingIngredient(item)
-                        } label: {
-                            Image(systemName: "pencil.circle.fill")
-                                .foregroundStyle(.blue)
-                        }
-                        
-                        Button {
-                            ingredientStore.deleteIngredient(item)
-                            selectedIngredients.removeAll { $0.name == item }
-                        } label: {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundStyle(.red)
-                        }
-                    }
-                    .padding()
-                    .background(Color(.secondarySystemBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .buttonStyle(.plain)
                 }
             }
-            .padding()
-            .background(Color(.tertiarySystemBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 12))
         }
     }
     
@@ -153,13 +71,16 @@ struct IngredientSelectionView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 24) {
-                    selectedItemsSection
-                    availableItemsSection
+                    VStack(alignment: .leading, spacing: 16) {
+                        headerSection
+                        selectedIngredientsSection
+                        availableIngredientsSection
+                    }
                 }
                 .padding()
             }
             .background(Color(.systemGroupedBackground))
-            .navigationTitle("Select Ingredients")
+            .navigationTitle("Add Ingredients")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -179,47 +100,35 @@ struct IngredientSelectionView: View {
             .sheet(isPresented: $showingAddNew) {
                 AddNewIngredientView(ingredientStore: ingredientStore)
             }
-            .alert("Enter Amount", isPresented: $showingQuantityInput) {
-                TextField("Amount", text: $tempAmount)
-                    .keyboardType(.decimalPad)
-                
-                Picker("Unit", selection: $selectedUnit) {
-                    ForEach(Ingredient.Unit.allCases, id: \.self) { unit in
-                        HStack {
-                            Text(unit.displayName)
-                            Text("(\(unit.rawValue))")
-                                .foregroundStyle(.secondary)
-                        }
-                        .tag(unit)
-                    }
-                }
-                
-                Button("Save") {
-                    if let amount = Double(tempAmount) {
-                        if let index = selectedIngredients.firstIndex(where: { $0.name == selectedName }) {
-                            selectedIngredients[index].amount = amount
-                            selectedIngredients[index].unit = selectedUnit
-                        } else {
-                            selectedIngredients.append(Ingredient(
-                                name: selectedName,
-                                amount: amount,
-                                unit: selectedUnit
-                            ))
-                        }
-                    }
-                }
-                
-                Button("Cancel", role: .cancel) { }
-            } message: {
-                Text("Enter amount and unit for \(selectedName)")
-            }
-            .sheet(item: $editingIngredient) { item in
-                EditIngredientView(
+            .alert("Add Amount", isPresented: $showingAmountPrompt) {
+                AmountPromptView(
+                    selectedName: selectedName,
                     ingredientStore: ingredientStore,
-                    originalName: item.id,
                     selectedIngredients: $selectedIngredients
                 )
             }
         }
+    }
+}
+
+struct AmountPromptView: View {
+    let selectedName: String
+    let ingredientStore: IngredientStore
+    @Binding var selectedIngredients: [Ingredient]
+    @State private var amount = ""
+    
+    var body: some View {
+        TextField("Amount", text: $amount)
+            .keyboardType(.decimalPad)
+        
+        Button("Add") {
+            if let amountValue = Double(amount) {
+                let unit = ingredientStore.units[selectedName] ?? .piece
+                let ingredient = Ingredient(name: selectedName, amount: amountValue, unit: unit)
+                selectedIngredients.append(ingredient)
+            }
+        }
+        
+        Button("Cancel", role: .cancel) { }
     }
 } 
