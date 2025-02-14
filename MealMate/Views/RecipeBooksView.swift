@@ -32,10 +32,11 @@ struct RecipeBooksView: View {
                             }
                             .frame(height: 160)
                             .frame(maxWidth: .infinity)
-                            .background(Color(.secondarySystemBackground))
+                            .padding()
+                            .background(.background)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color(.systemGray4), lineWidth: 1)
+                                    .stroke(Color.purple.opacity(0.3), lineWidth: 1)
                             )
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                         }

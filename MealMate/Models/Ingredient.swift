@@ -22,6 +22,14 @@ struct Ingredient: Identifiable, Hashable, Codable {
         case tablespoon = "tbsp"
         case teaspoon = "tsp"
         case cup = "cup"
+        case ounce = "oz"
+        case pound = "lb"
+        case pinch = "pinch"
+        case dash = "dash"
+        case fluidOunce = "fl oz"
+        case pint = "pt"
+        case quart = "qt"
+        case gallon = "gal"
         
         var displayName: String {
             switch self {
@@ -33,6 +41,14 @@ struct Ingredient: Identifiable, Hashable, Codable {
             case .tablespoon: return "Tablespoon"
             case .teaspoon: return "Teaspoon"
             case .cup: return "Cup"
+            case .ounce: return "Ounce"
+            case .pound: return "Pound"
+            case .pinch: return "Pinch"
+            case .dash: return "Dash"
+            case .fluidOunce: return "Fluid Ounce"
+            case .pint: return "Pint"
+            case .quart: return "Quart"
+            case .gallon: return "Gallon"
             }
         }
     }

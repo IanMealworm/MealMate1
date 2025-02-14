@@ -26,14 +26,27 @@ class KitchenwareStore: ObservableObject {
     }
     
     func addKitchenware(_ name: String) {
-        items.append(name)
-        saveItems()
+        // Normalize the name by trimming whitespace and converting to title case
+        let normalizedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+            .capitalized
+        
+        // Only add if it doesn't already exist
+        if !items.contains(normalizedName) {
+            items.append(normalizedName)
+            saveItems()
+        }
     }
     
     func updateKitchenware(oldName: String, newName: String) {
-        if let index = items.firstIndex(of: oldName) {
-            items[index] = newName
-            saveItems()
+        let normalizedNewName = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+            .capitalized
+        
+        // Only update if the new name doesn't already exist (unless it's the same as old name)
+        if oldName.capitalized == normalizedNewName || !items.contains(normalizedNewName) {
+            if let index = items.firstIndex(of: oldName) {
+                items[index] = normalizedNewName
+                saveItems()
+            }
         }
     }
     

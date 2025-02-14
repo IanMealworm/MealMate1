@@ -17,19 +17,32 @@ class IngredientStore: ObservableObject {
     }
     
     func addIngredient(_ name: String, defaultUnit: Ingredient.Unit = .piece) {
-        savedIngredients.insert(name)
-        defaultUnits[name] = defaultUnit
-        saveItems()
-        objectWillChange.send()
+        // Normalize the name by trimming whitespace and converting to title case
+        let normalizedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+            .capitalized
+        
+        // Only add if it doesn't already exist
+        if !savedIngredients.contains(normalizedName) {
+            savedIngredients.insert(normalizedName)
+            defaultUnits[normalizedName] = defaultUnit
+            saveItems()
+            objectWillChange.send()
+        }
     }
     
     func updateIngredient(oldName: String, newName: String, newUnit: Ingredient.Unit) {
-        savedIngredients.remove(oldName)
-        savedIngredients.insert(newName)
-        defaultUnits.removeValue(forKey: oldName)
-        defaultUnits[newName] = newUnit
-        saveItems()
-        objectWillChange.send()
+        let normalizedNewName = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+            .capitalized
+        
+        // Only update if the new name doesn't already exist (unless it's the same as old name)
+        if oldName.capitalized == normalizedNewName || !savedIngredients.contains(normalizedNewName) {
+            savedIngredients.remove(oldName)
+            savedIngredients.insert(normalizedNewName)
+            defaultUnits.removeValue(forKey: oldName)
+            defaultUnits[normalizedNewName] = newUnit
+            saveItems()
+            objectWillChange.send()
+        }
     }
     
     func deleteIngredient(_ name: String) {

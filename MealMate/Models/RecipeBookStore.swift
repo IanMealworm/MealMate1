@@ -51,14 +51,16 @@ class RecipeBookStore: ObservableObject {
     
     func removeRecipeFromBook(_ recipeId: UUID, bookId: UUID) {
         if let index = books.firstIndex(where: { $0.id == bookId }) {
-            if books[index].exportedRecipes != nil {
-                var localBook = books[index]
-                localBook.recipeIds = localBook.exportedRecipes?.map { $0.id } ?? []
-                localBook.exportedRecipes = nil
-                books[index] = localBook
+            var book = books[index]
+            
+            if book.exportedRecipes != nil {
+                book.exportedRecipes?.removeAll { $0.id == recipeId }
+                books[index] = book
+            } else {
+                book.recipeIds.removeAll { $0 == recipeId }
+                books[index] = book
             }
             
-            books[index].recipeIds.removeAll { $0 == recipeId }
             save()
         }
     }

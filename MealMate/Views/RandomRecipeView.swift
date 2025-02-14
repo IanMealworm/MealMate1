@@ -39,6 +39,9 @@ struct RandomRecipeView: View {
                                         .clipShape(RoundedRectangle(cornerRadius: 12))
                                 }
                             }
+                            .padding()
+                            .background(.background)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
                             
                             // Categories Section
                             VStack(alignment: .leading, spacing: 16) {
@@ -74,16 +77,17 @@ struct RandomRecipeView: View {
                                     }
                                 }
                             }
+                            .padding()
+                            .background(.background)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
                         .padding()
-                        .background(Color(.secondarySystemBackground))
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
                         
                         // Generate Button
                         Button {
                             generateRecipes()
                         } label: {
-                            Label("Generate Recipes", systemImage: "dice.fill")
+                            Label("Generate Recipes", systemImage: "dice")
                                 .font(.headline)
                                 .frame(maxWidth: .infinity)
                                 .padding()
@@ -91,49 +95,22 @@ struct RandomRecipeView: View {
                                 .foregroundStyle(.white)
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                         }
-                        .disabled(selectedCategories.isEmpty)
                         .padding(.horizontal)
                         
                     } else {
-                        // Results View
                         if !randomizedRecipes.isEmpty {
-                            VStack(alignment: .leading, spacing: 16) {
-                                HStack {
-                                    Image(systemName: "star.fill")
-                                        .foregroundStyle(.purple)
-                                    Text("SUGGESTED RECIPES")
-                                        .foregroundStyle(.purple)
-                                }
-                                .font(.headline)
-                                .padding(.horizontal)
-                                
-                                VStack(spacing: 12) {
-                                    ForEach(randomizedRecipes) { recipe in
-                                        NavigationLink(destination: RecipeDetailView(
-                                            recipe: recipe,
-                                            recipeStore: recipeStore,
-                                            shoppingListStore: shoppingListStore
-                                        )) {
-                                            RecipeRowView(recipe: recipe)
-                                                .padding()
-                                                .background(Color(.secondarySystemBackground))
-                                                .clipShape(RoundedRectangle(cornerRadius: 12))
-                                        }
+                            VStack(spacing: 16) {
+                                ForEach(randomizedRecipes) { recipe in
+                                    NavigationLink(destination: RecipeDetailView(
+                                        recipe: recipe,
+                                        recipeStore: recipeStore,
+                                        shoppingListStore: shoppingListStore
+                                    )) {
+                                        RecipeRowView(recipe: recipe)
+                                            .padding()
+                                            .background(Color(.secondarySystemBackground))
+                                            .clipShape(RoundedRectangle(cornerRadius: 12))
                                     }
-                                }
-                                .padding(.horizontal)
-                            }
-                            
-                            VStack(spacing: 12) {
-                                Button {
-                                    generateRecipes()
-                                } label: {
-                                    Label("Generate New Selection", systemImage: "arrow.clockwise")
-                                        .frame(maxWidth: .infinity)
-                                        .padding()
-                                        .background(.purple)
-                                        .foregroundStyle(.white)
-                                        .clipShape(RoundedRectangle(cornerRadius: 12))
                                 }
                                 
                                 Button {
@@ -153,7 +130,7 @@ struct RandomRecipeView: View {
                                     Text("Change Settings")
                                         .frame(maxWidth: .infinity)
                                         .padding()
-                                        .background(Color(.systemGray5))
+                                        .background(Color(.secondarySystemBackground))
                                         .foregroundStyle(.primary)
                                         .clipShape(RoundedRectangle(cornerRadius: 12))
                                 }
