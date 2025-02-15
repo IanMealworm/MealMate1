@@ -21,7 +21,6 @@ struct MealMateApp: App {
                 recipeBookStore: recipeBookStore
             )
             .onOpenURL { url in
-                print("Attempting to open URL: \(url)")
                 handleIncomingURL(url)
             }
         }

@@ -7,14 +7,14 @@ struct Recipe: Identifiable, Codable, Equatable {
     var description: String
     var ingredients: [Ingredient]
     var instructions: [String]
-    var cookTime: Int // in minutes
+    var cookTime: Int
     var servings: Int
     var isFavorite: Bool
     var kitchenware: [String]
     var imageData: Data?
     var category: Category
     var stepPhotos: [Int: Data]
-    var stepIngredients: [Int: [Ingredient]] // Maps step index to ingredients
+    var stepIngredients: [Int: [Ingredient]]
     
     enum Category: String, Codable, CaseIterable {
         case breakfast = "Breakfast"

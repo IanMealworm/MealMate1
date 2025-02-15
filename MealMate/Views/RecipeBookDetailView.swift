@@ -218,29 +218,24 @@ struct RecipeBookDetailView: View {
         }
     }
     
-    private func saveAllRecipes() {
-        guard let recipes = book.exportedRecipes else { return }
-        
-        for recipe in recipes {
-            // Save ingredients to ingredient store
-            for ingredient in recipe.ingredients {
-                ingredientStore.addIngredient(
-                    ingredient.name,
-                    defaultUnit: ingredient.unit
-                )
-            }
-            
-            // Save kitchenware to kitchenware store
-            for item in recipe.kitchenware {
-                kitchenwareStore.addKitchenware(item)
-            }
-            
-            // Save recipe
-            recipeStore.addRecipe(recipe)
-        }
-    }
-    
     private func saveRecipe(_ recipe: Recipe) {
+        // Create a clean recipe instance without any CloudKit metadata
+        let cleanRecipe = Recipe(
+            id: recipe.id,
+            name: recipe.name,
+            description: recipe.description,
+            ingredients: recipe.ingredients,
+            instructions: recipe.instructions,
+            cookTime: recipe.cookTime,
+            servings: recipe.servings,
+            isFavorite: recipe.isFavorite,
+            kitchenware: recipe.kitchenware,
+            imageData: recipe.imageData,
+            category: recipe.category,
+            stepPhotos: recipe.stepPhotos,
+            stepIngredients: recipe.stepIngredients
+        )
+        
         // Save ingredients to ingredient store
         for ingredient in recipe.ingredients {
             ingredientStore.addIngredient(
@@ -254,7 +249,15 @@ struct RecipeBookDetailView: View {
             kitchenwareStore.addKitchenware(item)
         }
         
-        // Save recipe
-        recipeStore.addRecipe(recipe)
+        // Save the clean recipe
+        recipeStore.addRecipe(cleanRecipe)
+    }
+    
+    private func saveAllRecipes() {
+        guard let recipes = book.exportedRecipes else { return }
+        
+        for recipe in recipes {
+            saveRecipe(recipe)
+        }
     }
 } 

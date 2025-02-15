@@ -8,8 +8,6 @@ struct RecipeBook: Identifiable, Codable {
     var recipeIds: [UUID]  // For internal use
     var imageData: Data?
     var color: RecipeBookColor
-    
-    // This will only be used during export/import
     var exportedRecipes: [Recipe]?
     
     enum CodingKeys: String, CodingKey {

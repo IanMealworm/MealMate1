@@ -137,5 +137,30 @@
     
     <key>LSSupportsOpeningDocumentsInPlace</key>
     <true/>
+    
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>remote-notification</string>
+    </array>
+    <key>NSUbiquitousContainerIsDocumentSyncEnabled</key>
+    <true/>
+    <key>NSUbiquitousContainerName</key>
+    <string>MealMate</string>
+    <key>NSUbiquitousContainerSupportedFolderLevels</key>
+    <string>Any</string>
+    <key>com.apple.developer.ubiquity-kvstore-identifier</key>
+    <string>$(TeamIdentifierPrefix)$(CFBundleIdentifier)</string>
+    <key>com.apple.developer.icloud-container-environment</key>
+    <string>Production</string>
+    <key>aps-environment</key>
+    <string>development</string>
+    <key>com.apple.developer.icloud-container-identifiers</key>
+    <array>
+        <string>iCloud.com.yourcompany.MealMate</string>
+    </array>
+    <key>com.apple.developer.icloud-services</key>
+    <array>
+        <string>CloudKit</string>
+    </array>
 </dict>
 </plist> 

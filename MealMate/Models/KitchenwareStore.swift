@@ -4,33 +4,61 @@ import Foundation
 class KitchenwareStore: ObservableObject {
     @Published private var items: [String] = []
     private let kitchenwareKey = "SavedKitchenware"
+    private let cloudStore = NSUbiquitousKeyValueStore.default
     
     var kitchenware: [String] { items }
     
-    nonisolated init() {
-        Task { @MainActor in
-            self.loadItems()
+    init() {
+        setupCloudSync()
+        loadItems()
+    }
+    
+    private func setupCloudSync() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleCloudStoreChange),
+            name: NSUbiquitousKeyValueStore.didChangeExternallyNotification,
+            object: cloudStore
+        )
+        
+        cloudStore.synchronize()
+    }
+    
+    private func loadItems() {
+        // Try loading from iCloud first
+        if let cloudItems = cloudStore.array(forKey: kitchenwareKey) as? [String] {
+            items = cloudItems
+        }
+        
+        // Fallback to local storage if needed
+        if items.isEmpty {
+            if let data = UserDefaults.standard.data(forKey: kitchenwareKey),
+               let decoded = try? JSONDecoder().decode([String].self, from: data) {
+                items = decoded
+            }
         }
     }
     
-    func addItem(_ item: String) {
-        items.append(item)
-        saveItems()
+    private func saveItems() {
+        // Save to iCloud
+        cloudStore.set(items, forKey: kitchenwareKey)
+        cloudStore.synchronize()
+        
+        // Save locally as backup
+        if let encoded = try? JSONEncoder().encode(items) {
+            UserDefaults.standard.set(encoded, forKey: kitchenwareKey)
+        }
     }
     
-    func removeItem(_ item: String) {
-        if let index = items.firstIndex(of: item) {
-            items.remove(at: index)
-            saveItems()
-        }
+    @objc private func handleCloudStoreChange(_ notification: Notification) {
+        loadItems()
+        objectWillChange.send()
     }
     
     func addKitchenware(_ name: String) {
-        // Normalize the name by trimming whitespace and converting to title case
         let normalizedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
             .capitalized
         
-        // Only add if it doesn't already exist
         if !items.contains(normalizedName) {
             items.append(normalizedName)
             saveItems()
@@ -41,7 +69,6 @@ class KitchenwareStore: ObservableObject {
         let normalizedNewName = newName.trimmingCharacters(in: .whitespacesAndNewlines)
             .capitalized
         
-        // Only update if the new name doesn't already exist (unless it's the same as old name)
         if oldName.capitalized == normalizedNewName || !items.contains(normalizedNewName) {
             if let index = items.firstIndex(of: oldName) {
                 items[index] = normalizedNewName
@@ -53,18 +80,5 @@ class KitchenwareStore: ObservableObject {
     func deleteKitchenware(_ name: String) {
         items.removeAll { $0 == name }
         saveItems()
-    }
-    
-    private func saveItems() {
-        if let encoded = try? JSONEncoder().encode(items) {
-            UserDefaults.standard.set(encoded, forKey: kitchenwareKey)
-        }
-    }
-    
-    private func loadItems() {
-        if let data = UserDefaults.standard.data(forKey: kitchenwareKey),
-           let decoded = try? JSONDecoder().decode([String].self, from: data) {
-            items = decoded
-        }
     }
 } 
